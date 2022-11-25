@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+  <meta th:replace="~{hostpage :: meta}">
+  <title>Hoá đơn</title>
+  <link th:replace="~{hostpage :: link}">
+</head>
+<body>
+<div class="container-xxl position-relative bg-white d-flex p-0">
+  <!-- Spinner Start -->
+  <div th:replace="~{hostpage :: div#spinner}"></div>
+  <!-- Spinner End -->
+  <!-- Sidebar Start -->
+  <div th:replace="~{hostpage :: div.sidebar}"></div>
+  <!-- Sidebar End -->
+  <!-- Content Start -->
+  <div class="content">
+    <!-- Navbar Start -->
+    <nav th:replace="~{hostpage :: nav.navbarfrag}"></nav>
+    <!-- Navbar End -->
+    <!-- Recent Sales Start -->
+    <div class="container-fluid pt-4 px-4">
+      <div class="bg-light text-center rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <form action="">
+            <button class="btn btn-warning">Nhà trọ 1</button>
+            <button class="btn btn-warning">Nhà trọ 2</button>
+          </form>
+        </div>
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <h6 class="mb-0">Hoá đơn các phòng</h6>
+        </div>
+        <div class="table-responsive">
+          <form action="invoicedetail.html">
+            <table class="table text-start align-middle table-bordered table-hover mb-0">
+              <thead>
+              <tr class="text-dark">
+                <th scope="col">Số phòng</th>
+                <th scope="col">Người thuê trọ</th>
+                <th scope="col">Tuỳ chọn</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td>123</td>
+                <td>Phạm Phú Hưng</td>
+                <td>
+                  <button class="btn btn-success fa-solid fa-file-invoice"></button>
+                  <button class="btn btn-danger fa-solid fa-trash"></button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- JavaScript Libraries -->
+<th:block th:insert="~{hostpage :: script}"></th:block>
+</body>
+
+</html>

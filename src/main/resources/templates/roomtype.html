@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta th:replace="~{hostpage :: meta}">
+    <title>Loại phòng</title>
+    <link th:replace="~{hostpage :: link}">
+    <link rel="stylesheet" href="/richtext/richtext.min.css"/>
+    <style>
+        #textEditor {
+            margin: 0;
+            width: 100%;
+            height: 300px;
+        }
+
+        #theRibbon {
+            border-bottom: none;
+            padding: 10px;
+            background-color: rgb(40, 110, 89);
+            color: white;
+            border-radius: 8px 8px 0px 0px;
+        }
+        #richTextArea {
+            border: 2px solid rgb(40, 110, 89);
+            height: 80%;
+            width: 580;
+        }
+
+        #theRibbon > button {
+            color: white;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            cursor: pointer;
+        }
+
+        #theRibbon > button:hover {
+            background-color: rgb(20, 90, 70);
+            transition: all 0.3s linear 0s;
+        }
+
+        input[type="color"] {
+            border: none;
+            outline: none;
+            background-color: transparent;
+        }
+    </style>
+</head>
+<body>
+<div class="container-xxl position-relative bg-white d-flex p-0">
+    <!-- Spinner Start -->
+    <div th:replace="~{hostpage :: div#spinner}"></div>
+    <!-- Spinner End -->
+    <!-- Sidebar Start -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+    <div th:replace="~{hostpage :: div.sidebar}"></div>
+    <!-- Sidebar End -->
+    <!-- Content Start -->
+    <div class="content">
+        <!-- Navbar Start -->
+        <nav th:replace="~{hostpage :: nav.navbarfrag}"></nav>
+        <!-- Navbar End -->
+        <!-- Recent Sales Start -->
+        <div class="container-fluid pt-4 px-4">
+            <div class="bg-light rounded p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#myModal2">Thêm loại phòng</button>
+                    <div class="modal" id="myModal2">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Thêm loại phòng</h5>
+                                    <button type="button" class="btn fa-solid fa-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="/api/v1/room-type/insert" method="post" th:object="${roomTypeObj}">
+                                    <div class="form-floating mb-4">
+                                        <select th:field="*{hostelId}">
+                                            <option th:each="hostel: ${hostels}" type="submit" th:text="${hostel.hostelName}" th:value="${hostel.hostelId}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-floating mb-4">
+                                        <label>Tên loại phòng</label>
+                                        <input type="text" th:field="*{roomName}" class="form-control" placeholder="Tên loại phòng">
+                                    </div>
+                                    <div class="form-floating mb-4">
+                                        <label>Giá loại phòng</label>
+                                        <input type="text" th:field="*{price}" class="form-control" placeholder="Giá loại phòng">
+                                    </div>
+                                    <div class="form-floating mb-4">
+                                        <label>Giá cọc</label>
+                                        <input type="text" th:field="*{depositPrice}" class="form-control" placeholder="Giá cọc">
+                                    </div>
+                                    <div class="form-floating mb-4">
+                                        <div class="form-group">
+                                            <label for="content">Content:</label>
+                                            <textarea type="text" rows="4" id="content" placeholder="Content" class="form-control"
+                                                      th:field="*{description}" autocomplete="off"></textarea>
+                                        </div>
+                                    </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Xác nhận</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal" id="myModal3">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Cập nhật loại phòng</h5>
+                                    <button type="button" class="btn fa-solid fa-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form th:action="@{/api/v1/room-type/update}" method="post">
+                                        <input type="hidden" name="typeId" th:value="${roomtype?.typeId}" class="form-control">
+                                        <div class="mb-3">
+                                            <label class="form-label">Tên loại phòng</label>
+                                            <input type="text" name="roomName" th:value="${roomtype?.roomName}" class="form-control" placeholder="Tên loại phòng">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="content">Content:</label>
+                                            <textarea type="utext" rows="4" id="content1" placeholder="Content" class="form-control" name="description" th:utext="${roomtype?.description}" autocomplete="off"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Giá</label>
+                                            <input type="text" name="price" th:value="${roomtype?.price}" class="form-control" placeholder="Giá">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Giá cọc</label>
+                                            <input type="text" name="depositPrice" th:value="${roomtype?.depositPrice}" class="form-control" placeholder="Giá cọc">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Xác nhận</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script th:inline="javascript">
+                        $(document).ready(function(){
+                            const queryString = window.location.search;
+                            const urlParams = new URLSearchParams(queryString);
+                            const updateRoomType = urlParams.get('updateRoomType')
+                            if(updateRoomType === 'true'){
+                                $("#myModal3").modal('show');
+                            } else{
+                            }
+                        });
+                    </script>
+
+                </div>
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h6 class="mb-0">Các loại phòng</h6>
+                </div>
+                <div class="table-responsive text-center">
+                    <form>
+                        <table class="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                            <tr class="text-dark">
+                                <th scope="col">Loại phòng</th>
+                                <th scope="col">Mô tả</th>
+                                <th scope="col">Số lượng</th>
+                                <th scope="col">Còn trống</th>
+                                <th scope="col">Giá (VNĐ)</th>
+                                <th scope="col">Giá cọc (VNĐ)</th>
+                                <th scope="col">Tuỳ chọn</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="roomType: ${roomTypes}">
+                                    <td th:text="${roomType.roomName}"></td>
+                                    <td th:utext="${roomType.description}"></td>
+                                    <td th:text="${#lists.size(roomType.roomsByTypeId)}"></td>
+                                    <td th:text="${#lists.size(roomType.roomsEmpty)}"></td>
+                                    <td th:text="${#numbers.formatDecimal(roomType.price, 0, 'COMMA', 0, 'POINT')}"></td>
+                                    <td th:text="${#numbers.formatDecimal(roomType.depositPrice, 0, 'COMMA', 0, 'POINT')}"></td>
+                                    <td>
+                                        <form th:action="@{/api/v1/room-type}">
+                                            <input type="hidden" name="updateRoomTypeId" th:value="${roomType?.typeId}">
+                                            <button class="btn btn-primary fa-solid fa-save" type="submit" name="updateRoomType" value="true"></button>
+                                        </form>
+                                        <form th:action="@{/api/v1/room-type/delete}">
+                                            <input type="hidden" name="typeId" th:value="${roomType?.typeId}">
+                                            <button class="btn btn-danger fa-solid fa-trash" type="submit" value="true"></button>
+                                        </form>
+                                    </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- JavaScript Libraries -->
+<th:block th:insert="~{hostpage :: script}"></th:block>
+<script src="/richtext/jquery.richtext.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#content').richText();
+        $('#content1').richText();
+
+    });
+</script>
+<script>
+    const inpFile = document.getElementById("inpFile");
+    const previewContainer = document.getElementById("imagePreview");
+    const previewImage = previewContainer.querySelector(".image-preview__image");
+    const previewDefaultText = previewContainer.querySelector(".image-preview__default-text");
+
+    inpFile.addEventListener("change", function () {
+        const file = this.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            previewDefaultText.style.display = "none";
+            previewImage.style.display = "block";
+
+            reader.addEventListener("load", function () {
+                console.log(this);
+                previewImage.setAttribute("src", this.result);
+            });
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+<script>
+    window.addEventListener("load", function(){
+        var editor = theWYSIWYG.document;
+        editor.designMode ="on";
+        boldButton.addEventListener("click", function(){
+            editor.execCommand("Bold", false, null);
+        }, false);
+
+        italicButton.addEventListener("click", function(){
+            editor.execCommand("Italic", false, null);
+        }, false);
+
+        supButton.addEventListener("click", function(){
+            editor.execCommand("Superscript", false, null);
+        }, false);
+
+        subButton.addEventListener("click", function(){
+            editor.execCommand("Subscript", false, null);
+        }, false);
+
+        strikeButton.addEventListener("click", function(){
+            editor.execCommand("Strikethrough", false, null);
+        }, false);
+
+        orderedListButton.addEventListener("click", function(){
+            editor.execCommand("InsertOrderedList", false, "newOL" + Math.round(Math.random() * 1000));
+        }, false);
+
+        unorderedListButton.addEventListener("click", function(){
+            editor.execCommand("InsertUNOrderedList", false, null);
+        }, false);
+
+        fontColorButton.addEventListener("change", function(event){
+            editor.execCommand("ForeColor", false, event.target.value);
+        }, false);
+
+        highlightButton.addEventListener("change", function(event){
+            editor.execCommand("BackColor", false, event.target.value);
+        }, false);
+
+        fontChanger.addEventListener("change", function(event){
+            editor.execCommand("FontName", false, event.target.value);
+        }, false);
+
+        fontSizeChanger.addEventListener("change", function(event){
+            editor.execCommand("FontSize", false, event.target.value);
+        }, false);
+
+        // undoButton.addEventListener("click", function(event){
+        //     editor.execCommand("undo", false, url);
+        // }, false);
+
+        // redoButton.addEventListener("click", function(event){
+        //     editor.execCommand("redo", false, url);
+        // }, false);
+    }, false);
+</script>
+</body>
+</html>

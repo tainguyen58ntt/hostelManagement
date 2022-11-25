@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta th:replace="~{hostpage :: meta}">
+    <title>Doanh thu</title>
+    <link th:replace="~{hostpage :: link}">
+</head>
+<body>
+<div class="container-xxl position-relative bg-white d-flex p-0">
+    <!-- Spinner Start -->
+    <div th:replace="~{hostpage :: div#spinner}"></div>
+    <!-- Spinner End -->
+    <!-- Sidebar Start -->
+    <div th:replace="~{hostpage :: div.sidebar}"></div>
+    <!-- Sidebar End -->
+    <!-- Content Start -->
+    <div class="content">
+        <!-- Navbar Start -->
+        <nav th:replace="~{hostpage :: nav.navbarfrag}"></nav>
+        <!-- Navbar End -->
+        <!-- Select year -->
+        <form style="border: 2px solid red;" action="/api/v1/invoice/money">
+            <div style="margin: 10px 0px 10px 25px;">
+                <h5>Dashboard</h5>
+            </div>
+            <div class="row" style="margin: 10px;">
+
+                <div class="col-3">
+                    <div style="margin-top: 15px;">
+                        <i>Năm</i>
+                        <select name="yearOptional" style="width: 100%; border: 1px solid #00ca8e;">
+                            <option th:each="year : ${listYear}" th:text="${year}" th:value="${year}"></option>
+
+                        </select>
+                        <input type="submit" th:value="Chon">
+                    </div>
+                </div>
+
+                <div class="col-3">
+                    <div class="card">
+                        <div class="card-body row">
+                            <div class="col-8">
+                                <i class="card-title">Tổng số nhà trọ</i>
+                                <h2 class="card-text" th:text="${totalHostel}"></h2>
+                            </div>
+                            <div class="col-4">
+                                <i class="fa-solid fa-house" style="font-size: 30px;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body row">
+                            <div class="col-8">
+                                <i class="card-title">Tổng số phòng</i>
+                                <h2 class="card-text" th:text="${totalRooms}"></h2>
+                            </div>
+                            <div class="col-4">
+                                <i class="fa-solid fa-person-booth" style="font-size: 30px;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body row">
+                            <div class="col-8">
+                                <i class="card-title">Tổng doanh thu</i>
+                                <h2 class="card-text gains" style="color: #00ca8e;" th:text="${#aggregates.sum(amountOfHostel.values())}"></h2>
+                            </div>
+
+                            <div class="col-4">
+                                <i class="fa-solid fa-money-bill" style="font-size: 30px;"></i>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- End Select year -->
+        <!-- Chart Start -->
+        <div class="container-fluid pt-4 px-4">
+            <div class="row g-4">
+                <div class="col-sm-12 col-xl-6">
+                    <div class="bg-light rounded h-100 p-4">
+                        <h6 class="mb-4">Doanh thu qua các tháng trong năm</h6>
+                        <canvas id="line-chart"></canvas>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-xl-6">
+                    <div class="bg-light rounded h-100 p-4">
+                        <h6 class="mb-4">Số lượng phòng trống từng nhà trọ</h6>
+                        <canvas id="empty-bar-chart"></canvas>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-xl-6">
+                    <div class="bg-light rounded h-100 p-4">
+                        <h6 class="mb-4">Tổng số lượng người thuê ở từng nhà trọ</h6>
+                        <canvas id="pie-chart"></canvas>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-xl-6">
+                    <div class="bg-light rounded h-100 p-4">
+                        <h6 class="mb-4">Doanh thu của các nhà trọ</h6>
+                        <canvas id="bar-chart"></canvas>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-xl-6">
+                    <div class="bg-light rounded h-100 p-4">
+                        <h6 class="mb-4" th:text="${'Tổng doanh thu: '+#aggregates.sum(amountOfHostel.values())}"></h6>
+                        <canvas id="doughnut-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Chart End -->
+
+    </div>
+    <!-- Content End -->
+</div>
+<!-- JavaScript Libraries -->
+<th:block th:insert="~{hostpage :: script}"></th:block>
+
+<script th:inline="javascript"> //Line chart
+    var x = [[${invoicesPrice.values()}]];
+    //alert(x);
+    var ctx3 = $("#line-chart").get(0).getContext("2d");
+    var myChart3 = new Chart(ctx3, {
+        type: "line",
+        data: {
+            labels: [[${invoicesPrice.keySet()}]],
+            datasets: [{
+                label: "VNĐ",
+                fill: false,
+                backgroundColor: "rgba(0, 156, 255, .3)",
+                data: x,
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+</script>
+<script th:inline="javascript"> //Pie chart
+var pc = $("#pie-chart").get(0).getContext("2d");
+var barColors = [
+    "rgba(0,0,255,1.0)",
+    "rgba(0,0,255,0.8)",
+    "rgba(0,0,255,0.6)",
+    "rgba(0,0,255,0.4)",
+    "rgba(0,0,255,0.2)",
+];
+var barChart = new Chart(pc, {
+    type: "pie",
+    data: {
+        labels: [[${usersInHostel.keySet()}]],
+        datasets: [{
+            backgroundColor: barColors,
+            data: [[${usersInHostel.values()}]]
+        }]
+    },
+    options: {
+        responsive: true,
+        title: {
+            display: true,
+        }
+    }
+});
+</script>
+<script th:inline="javascript"> //Bar chart
+    var bc = $("#bar-chart").get(0).getContext("2d");
+    var barChart = new Chart(bc, {
+        type: "bar",
+        data: {
+            labels: [[${amountOfHostel.keySet()}]],
+            datasets: [{
+                label: "VNĐ",
+                backgroundColor: ["red","green","blue"],
+                data: [[${amountOfHostel.values()}]]
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+</script>
+<script th:inline="javascript"> //Doughnut chart
+var bc = $("#doughnut-chart").get(0).getContext("2d");
+var barChart = new Chart(bc, {
+    type: "doughnut",
+    data: {
+        labels: [[${amountOfHostel.keySet()}]],
+        datasets: [{
+            backgroundColor: ["purple","yellow","green","blue"],
+            data: [[${amountOfHostel.values()}]]
+        }]
+    },
+    options: {
+        responsive: true,
+        title: {
+            display: true,
+        }
+    }
+});
+</script>
+<script th:inline="javascript"> //Grouped bar chart
+var bc = $("#empty-bar-chart").get(0).getContext("2d");
+var barChart = new Chart(bc, {
+    type: 'bar',
+    data: {
+        labels: [[${totalRoomStatus.keySet()}]],
+        datasets: [
+            {
+                label: "Phòng trống",
+                backgroundColor: ["purple","yellow","green","blue"],
+                data: [[${totalRoomStatus.values()}]]
+            }
+        ]
+    },
+    options: {
+        title: {
+            display: true,
+        }
+    }
+});
+</script>
+</body>
+
+</html>
